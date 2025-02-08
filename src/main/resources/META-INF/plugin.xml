@@ -1,18 +1,16 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.michaelomichael.intellijmethodnumbersplugin</id>
-    <name>intellij-method-numbers-plugin</name>
+    <!-- TODO: Add plugin icon -->
+    <id>dev.michaelomichael.methodnumbers</id>
+    <name>Method Number Hints</name>
     <vendor>michaelomichael</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.michaelomichael.intellijmethodnumbersplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <projectService serviceImplementation="dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService" id="MyMethodCountingService"/>
+        <postStartupActivity implementation="dev.michaelomichael.intellij.plugins.methodnumbers.listeners.MyProjectActivity"/>
+        <codeInsight.declarativeInlayProviderFactory implementation="dev.michaelomichael.intellij.plugins.methodnumbers.hints.MethodNumbersInlayHintsFactory"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.michaelomichael.intellijmethodnumbersplugin.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
 </idea-plugin>
