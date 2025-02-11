@@ -3,7 +3,7 @@ package dev.michaelomichael.intellij.plugins.methodnumbers.hints
 import com.intellij.testFramework.utils.inlays.declarative.DeclarativeInlayHintsProviderTestCase
 import org.intellij.lang.annotations.Language
 
-class JavaMethodNumbersInlayHintsProviderTest : DeclarativeInlayHintsProviderTestCase() {
+class MethodNumbersInlayHintsProviderJavaTest : DeclarativeInlayHintsProviderTestCase() {
 
     fun `test basic cases`() {
         val text = """
@@ -21,6 +21,6 @@ class JavaMethodNumbersInlayHintsProviderTest : DeclarativeInlayHintsProviderTes
     }
 
     private fun testTypeHints(@Language("Java") text: String) {
-        doTestProvider("Test.java", text, JavaMethodNumbersInlayHintsProvider())
+        doTestProvider("Test.java", text, MethodNumbersInlayHintsProvider())
     }
 }

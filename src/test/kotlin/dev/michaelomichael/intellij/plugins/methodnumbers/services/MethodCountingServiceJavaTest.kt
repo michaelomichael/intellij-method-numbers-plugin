@@ -1,17 +1,17 @@
-package dev.michaelomichael.intellij.plugins.methodnumbers
+package dev.michaelomichael.intellij.plugins.methodnumbers.services
 
 import com.intellij.openapi.components.service
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.childrenOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService
 
-class MethodCountingServiceTest : BasePlatformTestCase() {
+class MethodCountingServiceJavaTest : BasePlatformTestCase() {
 
     fun `test uses correct file`() {
-        val psiFile = myFixture.configureByFile("spare/MyClass.java")
+        val psiFile = myFixture.configureByFile("differentPackage/MyClass.java")
         val underTest = project.service<MethodCountingService>()
 
         val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
@@ -24,7 +24,7 @@ class MethodCountingServiceTest : BasePlatformTestCase() {
     }
 
     fun `test correct number for method in main java class`() {
-        val psiFile = myFixture.configureByFile("MyClass.java")
+        val psiFile = myFixture.configureByFile("some/pkg/MyClass.java")
         val underTest = project.service<MethodCountingService>()
 
         val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
@@ -37,7 +37,7 @@ class MethodCountingServiceTest : BasePlatformTestCase() {
     }
 
     fun `test correct number for static method in main java class`() {
-        val psiFile = myFixture.configureByFile("MyClass.java")
+        val psiFile = myFixture.configureByFile("some/pkg/MyClass.java")
         val underTest = project.service<MethodCountingService>()
 
         val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
@@ -49,7 +49,7 @@ class MethodCountingServiceTest : BasePlatformTestCase() {
     }
 
     fun `test correct number for method in inner class`() {
-        val psiFile = myFixture.configureByFile("MyClass.java")
+        val psiFile = myFixture.configureByFile("some/pkg/MyClass.java")
         val underTest = project.service<MethodCountingService>()
 
         val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
@@ -64,7 +64,7 @@ class MethodCountingServiceTest : BasePlatformTestCase() {
     }
 
     fun `test correct number for method in inner inner class`() {
-        val psiFile = myFixture.configureByFile("MyClass.java")
+        val psiFile = myFixture.configureByFile("some/pkg/MyClass.java")
         val underTest = project.service<MethodCountingService>()
 
         val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
@@ -80,7 +80,7 @@ class MethodCountingServiceTest : BasePlatformTestCase() {
     }
 
     fun `test correct number for method in static inner class`() {
-        val psiFile = myFixture.configureByFile("MyClass.java")
+        val psiFile = myFixture.configureByFile("some/pkg/MyClass.java")
         val underTest = project.service<MethodCountingService>()
 
         val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
@@ -90,9 +90,24 @@ class MethodCountingServiceTest : BasePlatformTestCase() {
         val staticInnerClassMethod1 = staticInnerClass.childrenOfType<PsiMethod>()[0]
         val staticInnerClassMethod2 = staticInnerClass.childrenOfType<PsiMethod>()[1]
 
-        assertEquals(7, underTest.getMethodNumber(staticInnerClassMethod1))
+        // TODO: Why is the cast needed here? If I remove it, running the tests gives a NoSuchMethodError
+        assertEquals(7, underTest.getMethodNumber(staticInnerClassMethod1 as PsiElement))
         assertEquals(8, underTest.getMethodNumber(staticInnerClassMethod2))
     }
+    
+    fun `test correct number for method in private top-level class`() {
+        val psiFile = myFixture.configureByFile("some/pkg/MyClass.java")
+        val underTest = project.service<MethodCountingService>()
 
-    override fun getTestDataPath() = "src/test/testData"
+        val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
+        val privateTopLevelClass = javaFile.childrenOfType<PsiClass>()[1]
+        
+        val privateTopLevelClassMethod1 = privateTopLevelClass.childrenOfType<PsiMethod>()[0]
+        val privateTopLevelClassMethod2 = privateTopLevelClass.childrenOfType<PsiMethod>()[1]
+
+        assertEquals(10, underTest.getMethodNumber(privateTopLevelClassMethod1))
+        assertEquals(11, underTest.getMethodNumber(privateTopLevelClassMethod2))
+    }
+    
+    override fun getTestDataPath() = "src/test/testData/java"
 }

@@ -11,8 +11,8 @@ class MethodNumbersInlayHintsFactory : InlayHintsProviderFactory {
     }
 
     private val provider = InlayProviderInfo(
-        JavaMethodNumbersInlayHintsProvider(),
-        "dev.michaelomichael.intellij.plugins.methodnumbers.hints.JavaMethodNumbers",
+        MethodNumbersInlayHintsProvider(),
+        "dev.michaelomichael.intellij.plugins.methodnumbers.hints.MethodNumbers",
         setOf(),
         true,
         "methodnumbers"
@@ -21,6 +21,11 @@ class MethodNumbersInlayHintsFactory : InlayHintsProviderFactory {
     override fun getProviderInfo(language: Language, providerId: String): InlayProviderInfo = provider
     override fun getProvidersForLanguage(language: Language): List<InlayProviderInfo> = listOf(provider)
 
-    // TODO: Other languages
-    override fun getSupportedLanguages(): Set<Language> = setOf(Language.findLanguageByID("JAVA")!!)
+    override fun getSupportedLanguages(): Set<Language> =
+        setOf(
+            Language.findLanguageByID("JAVA"),
+            Language.findLanguageByID("Kotlin"),
+        )
+            .filterNotNull()
+            .toSet()
 }
