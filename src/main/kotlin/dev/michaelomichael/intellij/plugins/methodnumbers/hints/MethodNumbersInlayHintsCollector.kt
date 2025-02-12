@@ -8,7 +8,8 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiElement
 import dev.michaelomichael.intellij.plugins.methodnumbers.MyBundle
 import dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService
-import dev.michaelomichael.intellij.plugins.methodnumbers.services.introspector.IntrospectorFactory.methodFinderFor
+import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory.introspectorFor
+import dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService.MethodIndexDetails
 
 class MethodNumbersInlayHintsCollector : SharedBypassCollector {
 
@@ -17,7 +18,7 @@ class MethodNumbersInlayHintsCollector : SharedBypassCollector {
             return
         }
 
-        val introspector = methodFinderFor(element.containingFile)
+        val introspector = introspectorFor(element.containingFile)
             
         if (! introspector.isMethod(element)) {
             return
@@ -31,13 +32,13 @@ class MethodNumbersInlayHintsCollector : SharedBypassCollector {
             ?: thisLogger().warn("Cannot find a method number for $element")
     }
 
-    private fun addInlayToMethod(offset: Int, methodNumber: Int, sink: InlayTreeSink) {
+    private fun addInlayToMethod(offset: Int, methodIndexDetails: MethodIndexDetails, sink: InlayTreeSink) {
         sink.addPresentation(
             InlineInlayPosition(offset, relatedToPrevious = false),
             hasBackground = true,
-            tooltip = MyBundle.message("hintTooltip")
+            tooltip = MyBundle.message("hintTooltip", methodIndexDetails.methodIndexInFile+1, methodIndexDetails.numMethodsInFile)
         ) {
-            text("$methodNumber")
+            text("${methodIndexDetails.methodIndexInFile+1}")
         }
     }
 }

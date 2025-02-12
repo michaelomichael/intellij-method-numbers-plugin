@@ -3,12 +3,13 @@ package dev.michaelomichael.intellij.plugins.methodnumbers.services
 import com.intellij.openapi.components.service
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService.MethodIndexDetails
 import org.jetbrains.kotlin.psi.KtFile
 
 class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
 
     fun `test uses correct file`() {
-        val psiFile = myFixture.configureByFile("differentPackage/MyClass.kt")
+        val psiFile = myFixture.configureByFile("cccc/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
@@ -16,12 +17,12 @@ class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
         val method1 = mainClass.methods[0]
         val method2 = mainClass.methods[1]
 
-        assertEquals(3, underTest.getMethodNumber(method1))
-        assertEquals(6, underTest.getMethodNumber(method2))
+        assertMethodNumberEquals(2, 6, underTest.getMethodNumber(method1))
+        assertMethodNumberEquals(5, 6, underTest.getMethodNumber(method2))
     }
 
     fun `test correct number for method in main java class`() {
-        val psiFile = myFixture.configureByFile("some/pkg/MyClass.kt")
+        val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
@@ -29,12 +30,12 @@ class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
         val method1 = mainClass.methods[0]
         val method2 = mainClass.methods[1]
 
-        assertEquals(1, underTest.getMethodNumber(method1 as PsiElement))
-        assertEquals(2, underTest.getMethodNumber(method2))
+        assertMethodNumberEquals(0, 12, underTest.getMethodNumber(method1 as PsiElement))
+        assertMethodNumberEquals(1, 12, underTest.getMethodNumber(method2))
     }
 
     fun `test correct number for static method in main java class`() {
-        val psiFile = myFixture.configureByFile("some/pkg/MyClass.kt")
+        val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
@@ -42,11 +43,11 @@ class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
         val companionObject = mainClass.innerClasses[2]
         val staticMethod = companionObject.methods[0]
 
-        assertEquals(9, underTest.getMethodNumber(staticMethod))
+        assertMethodNumberEquals(8, 12, underTest.getMethodNumber(staticMethod))
     }
 
     fun `test correct number for method in inner class`() {
-        val psiFile = myFixture.configureByFile("some/pkg/MyClass.kt")
+        val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
@@ -56,12 +57,12 @@ class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
         val innerClassMethod1 = innerClass.methods[0]
         val innerClassMethod2 = innerClass.methods[1]
 
-        assertEquals(3, underTest.getMethodNumber(innerClassMethod1))
-        assertEquals(6, underTest.getMethodNumber(innerClassMethod2))
+        assertMethodNumberEquals(2, 12, underTest.getMethodNumber(innerClassMethod1))
+        assertMethodNumberEquals(5, 12, underTest.getMethodNumber(innerClassMethod2))
     }
 
     fun `test correct number for method in inner inner class`() {
-        val psiFile = myFixture.configureByFile("some/pkg/MyClass.kt")
+        val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
@@ -72,12 +73,12 @@ class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
         val innerInnerClassMethod1 = innerInnerClass.methods[0]
         val innerInnerClassMethod2 = innerInnerClass.methods[1]
 
-        assertEquals(4, underTest.getMethodNumber(innerInnerClassMethod1))
-        assertEquals(5, underTest.getMethodNumber(innerInnerClassMethod2))
+        assertMethodNumberEquals(3, 12, underTest.getMethodNumber(innerInnerClassMethod1))
+        assertMethodNumberEquals(4, 12, underTest.getMethodNumber(innerInnerClassMethod2))
     }
 
     fun `test correct number for method in static inner class`() {
-        val psiFile = myFixture.configureByFile("some/pkg/MyClass.kt")
+        val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
@@ -87,12 +88,12 @@ class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
         val staticInnerClassMethod1 = staticInnerClass.methods[0]
         val staticInnerClassMethod2 = staticInnerClass.methods[1]
 
-        assertEquals(7, underTest.getMethodNumber(staticInnerClassMethod1))
-        assertEquals(8, underTest.getMethodNumber(staticInnerClassMethod2))
+        assertMethodNumberEquals(6, 12, underTest.getMethodNumber(staticInnerClassMethod1))
+        assertMethodNumberEquals(7, 12, underTest.getMethodNumber(staticInnerClassMethod2))
     }
     
     fun `test correct number for method in private top-level class`() {
-        val psiFile = myFixture.configureByFile("some/pkg/MyClass.kt")
+        val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
@@ -101,18 +102,23 @@ class MethodCountingServiceKotlinTest : BasePlatformTestCase() {
         val privateTopLevelClassMethod1 = privateTopLevelClass.methods[0]
         val privateTopLevelClassMethod2 = privateTopLevelClass.methods[1]
 
-        assertEquals(10, underTest.getMethodNumber(privateTopLevelClassMethod1))
-        assertEquals(11, underTest.getMethodNumber(privateTopLevelClassMethod2))
+        assertMethodNumberEquals(9, 12, underTest.getMethodNumber(privateTopLevelClassMethod1))
+        assertMethodNumberEquals(10, 12, underTest.getMethodNumber(privateTopLevelClassMethod2))
     }
     
     fun `test correct number for top level method`() {
-        val psiFile = myFixture.configureByFile("some/pkg/MyClass.kt")
+        val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val underTest = project.service<MethodCountingService>()
 
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
         val privateTopLevelMethod = kotlinFile.classes[2].methods[0]
         
-        assertEquals(12, underTest.getMethodNumber(privateTopLevelMethod))
+        assertMethodNumberEquals(11, 12, underTest.getMethodNumber(privateTopLevelMethod))
+    }
+    
+    private fun assertMethodNumberEquals(expectedIndex: Int, expectedTotal: Int, actual: MethodIndexDetails?) {
+        assertEquals("Wrong method number", expectedIndex, actual?.methodIndexInFile)
+        assertEquals("Wrong total number of methods", expectedTotal, actual?.numMethodsInFile)
     }
     
     override fun getTestDataPath() = "src/test/testData/kotlin"

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <clipPath id="rounded-corners">
+      <rect x="2" y="2" width="36" height="36" rx="3" ry="3"/>
+    </clipPath>
+    <radialGradient id="radial-gradient" r="1" cx="0.25" cy="0.25">
+      <stop offset="60%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="black" stop-opacity="30%"/>
+    </radialGradient>
+  </defs>
+  <g clip-path="url(#rounded-corners)">
+    <rect x="0" y="0" width="40" height="40" fill="#AAAAAA"/>
+    <g>
+      <rect x="6" y="6" width="11" height="11" rx="2" ry="2" fill="#A3A3A3"/>
+      <text x="9.5" y="15" fill="#505050" font-family="sans-serif" font-size="9">1</text>
+      <text x="18" y="15" fill="#001D75" font-family="sans-serif" font-size="9">public</text>
+    </g>
+    <g>
+      <rect x="6" y="18.5" width="11" height="11" rx="2" ry="2" fill="#A3A3A3"/>
+      <text x="9.5" y="27.5" fill="#505050" font-family="sans-serif" font-size="9">2</text>
+      <text  x="18" y="27.5" fill="#001D75" font-family="sans-serif" font-size="9">private</text>
+    </g>
+    <g>
+      <rect x="6" y="31" width="11" height="11" rx="2" ry="2" fill="#A3A3A3"/>
+      <text x="9.5" y="40" fill="#505050" font-family="sans-serif" font-size="9">3</text>
+      <text x="18" y="40" fill="#001D75" font-family="sans-serif" font-size="9">private</text>
+    </g>
+    
+    <rect width="40" height="40" fill="url(#radial-gradient)"/>
+    <rect x="2" y="2" width="36" height="36" rx="3" ry="3" fill="transparent" stroke="#333333" stroke-width="2"/>
+  </g>
+</svg>

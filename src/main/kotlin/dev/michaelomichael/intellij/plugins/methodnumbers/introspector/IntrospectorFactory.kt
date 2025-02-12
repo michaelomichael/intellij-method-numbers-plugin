@@ -1,9 +1,9 @@
-package dev.michaelomichael.intellij.plugins.methodnumbers.services.introspector
+package dev.michaelomichael.intellij.plugins.methodnumbers.introspector
 
 import com.intellij.psi.PsiFile
 
 object IntrospectorFactory {
-    fun methodFinderFor(file: PsiFile): MethodLister =
+    fun introspectorFor(file: PsiFile): Introspector =
         when (file.fileType.name) {
             "Kotlin" -> KotlinIntrospector()
             "JAVA" -> JavaIntrospector()

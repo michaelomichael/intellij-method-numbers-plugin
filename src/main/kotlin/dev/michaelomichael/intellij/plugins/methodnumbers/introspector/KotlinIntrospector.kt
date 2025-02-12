@@ -1,4 +1,4 @@
-package dev.michaelomichael.intellij.plugins.methodnumbers.services.introspector
+package dev.michaelomichael.intellij.plugins.methodnumbers.introspector
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -8,11 +8,11 @@ import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class KotlinIntrospector : MethodLister {
-    override fun findAllMethods(file: PsiFile): List<MethodRef> =
+class KotlinIntrospector : Introspector {
+    override fun findAllMethods(file: PsiFile): List<MethodKey> =
         findAllKotlinMethods(file.unwrapped as PsiFile)
         
-    private fun findAllKotlinMethods(file: PsiFile): List<MethodRef> =
+    private fun findAllKotlinMethods(file: PsiFile): List<MethodKey> =
         file
             .navigationElement
             .children
@@ -25,7 +25,7 @@ class KotlinIntrospector : MethodLister {
                 }
             }
 
-    private fun KtClassOrObject.findFunctionsRecursively(): List<MethodRef> = children
+    private fun KtClassOrObject.findFunctionsRecursively(): List<MethodKey> = children
             .flatMap { child ->
                 when (child) {
                     is KtClassBody -> child.findFunctionsRecursively()
@@ -33,7 +33,7 @@ class KotlinIntrospector : MethodLister {
                 }
             }
 
-    private fun KtClassBody.findFunctionsRecursively(): List<MethodRef> = children
+    private fun KtClassBody.findFunctionsRecursively(): List<MethodKey> = children
         .flatMap { child ->
             when (child) {
                 is KtNamedFunction -> listOf(child.toMethodRef())
@@ -42,7 +42,7 @@ class KotlinIntrospector : MethodLister {
             }
         }
 
-    override fun toMethodRef(method: PsiElement): MethodRef =
+    override fun toMethodKey(method: PsiElement): MethodKey =
         when {
             method is KtNamedFunction -> method.toMethodRef()
             method.unwrapped is KtNamedFunction -> (method.unwrapped as KtNamedFunction).toMethodRef()
@@ -57,9 +57,10 @@ class KotlinIntrospector : MethodLister {
             else -> error("PsiElement is not a method: $element")
         }
 
-    private fun KtNamedFunction.toMethodRef(): MethodRef = 
-        MethodRef(
+    private fun KtNamedFunction.toMethodRef(): MethodKey = 
+        MethodKey(
             nameAsSafeName.asString(),
+            getMethodStartOffset(this),
             (this.kotlinFqName?.asString() ?: this.toString())
                 .plus(getParameters().joinToString(",", "(", ")")),
         )

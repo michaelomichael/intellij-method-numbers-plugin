@@ -1,12 +1,12 @@
-package dev.michaelomichael.intellij.plugins.methodnumbers.services.introspector
+package dev.michaelomichael.intellij.plugins.methodnumbers.introspector
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMethod
 
-class JavaIntrospector : MethodLister {
-    override fun findAllMethods(file: PsiFile): List<MethodRef> = file
+class JavaIntrospector : Introspector {
+    override fun findAllMethods(file: PsiFile): List<MethodKey> = file
         .children
         .flatMap { child ->
             when (child) {
@@ -15,21 +15,22 @@ class JavaIntrospector : MethodLister {
             }
         }
 
-    private fun getMethodsForClass(clazz: PsiClass): List<MethodRef> = clazz
+    private fun getMethodsForClass(clazz: PsiClass): List<MethodKey> = clazz
         .children
         .flatMap { child ->
             when (child) {
                 is PsiClass -> getMethodsForClass(child)
-                is PsiMethod -> listOf(toMethodRef(child))
+                is PsiMethod -> listOf(toMethodKey(child))
                 else -> emptyList()
             }
         }
 
-    override fun toMethodRef(method: PsiElement) = 
+    override fun toMethodKey(method: PsiElement) = 
         when (method) {
-            is PsiMethod -> MethodRef(
+            is PsiMethod -> MethodKey(
                 method.name,
-                "${method.containingClass?.qualifiedName ?: ""}#${method.name}(${method.parameterList.parameters.joinToString(",") { it.text }})"
+                getMethodStartOffset(method),
+                "${method.containingClass?.qualifiedName ?: ""}#${method.name}(${method.parameterList.parameters.joinToString(",") { it.text }})",
             )
             else -> error("Not a PsiMethod: $method")
         }

@@ -20,6 +20,9 @@
 Displays a numeric hint beside each method in the file, so that you can more easily keep track of multiple similarly-named methods (e.g. in JUnit Test classes).
 
 It currently supports basic Java and Kotlin.
+
+![Java example with dark theme](.github/readme/example-java-dark.png)
+
 <!-- Plugin description end -->
 
 ## Installation

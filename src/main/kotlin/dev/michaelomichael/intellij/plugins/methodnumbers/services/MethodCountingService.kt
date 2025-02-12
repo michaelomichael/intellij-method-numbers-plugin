@@ -4,55 +4,58 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import dev.michaelomichael.intellij.plugins.methodnumbers.services.introspector.IntrospectorFactory.methodFinderFor
-import dev.michaelomichael.intellij.plugins.methodnumbers.services.introspector.MethodRef
+import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory.introspectorFor
+import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.MethodKey
 
-// TODO: This works reasonably well, but the MethodChangeListener doesn't always tell us when something's changed,
-//       so we're getting lots of cases where you type a new method and it ends up being told that it doesn't have a
-//       method number.
-//       The obvious course of action is to refresh the cache when we don't find the method number in there, but it
-//       feels like there's a massive risk of us causing an infinite loop.
-//       It might be possible for us to just simplify the whole thing by having the Hints Collector just keep track of
-//       how many methods it's visited so far, assuming that a single hints collector would be used to display the hints
-//       for every single element in the file at once. (I suspect, though, that the hints collector is only used to
-//       calculate hints for the _visible_ portion of the screen...
 @Service(Service.Level.PROJECT)
 class MethodCountingService(val project: Project) {
     
+    data class MethodIndexDetails(val methodIndexInFile: Int, val numMethodsInFile: Int)
+    
     private data class FileDetails(
         val fileKey: String,
-        val methodsByMethodRef: Map<MethodRef,MethodRefWithIndex> = emptyMap(),
+        val methodsByMethodKey: Map<MethodKey,MethodDetails> = emptyMap(),
     )
 
-    private data class MethodRefWithIndex(
-        val methodRef: MethodRef,
-        var numberInFile: Int,
+    private data class MethodDetails(
+        val methodKey: MethodKey,
+        var indexDetails: MethodIndexDetails,
     )
 
     private val fileDetailsByFileKey = mutableMapOf<String,FileDetails>()
 
-    fun refreshCacheForFile(file: PsiFile) {
-        refreshCacheForFileAndGet(file)
+    fun getMethodNumber(method: PsiElement): MethodIndexDetails? {
+        val fileKey = method.containingFile.fileKey
+        val methodKey = method.methodKey
+        
+        // If not we don't find the exact method in-cache then we'll reload the cache
+        // and try again.
+        val methodDetails = fileDetailsByFileKey[fileKey]?.methodsByMethodKey?.get(methodKey)
+            ?: refreshCacheForFile(method.containingFile)
+                    .methodsByMethodKey[methodKey]
+        
+        return methodDetails?.indexDetails
     }
 
-    fun getMethodNumber(method: PsiElement): Int? =
-        fileDetailsByFileKey
-            .getOrPut(method.containingFile.getUniqueFileKey()) { refreshCacheForFileAndGet(method.containingFile) }
-            .methodsByMethodRef[method.getMethodRef()]
-            ?.numberInFile
-
-    private fun refreshCacheForFileAndGet(file: PsiFile): FileDetails =
-        methodFinderFor(file)
+    private fun refreshCacheForFile(file: PsiFile): FileDetails =
+        introspectorFor(file)
             .findAllMethods(file)
-            .mapIndexed { idx, methodRef -> MethodRefWithIndex(methodRef, idx + 1) }
-            .associateBy { it.methodRef }
-            .let { FileDetails(file.getUniqueFileKey(), it) }
+            .withTotalCount { methods, count ->
+                methods.mapIndexed { idx, methodRef -> MethodDetails(methodRef, MethodIndexDetails(idx, count)) }
+            }
+            .associateBy { it.methodKey }
+            .let { FileDetails(file.fileKey, it) }
             .also {
                 fileDetailsByFileKey[it.fileKey] = it
             }
 
-    private fun PsiFile.getUniqueFileKey() = virtualFile.path
+    private val PsiFile.fileKey: String
+        get() = virtualFile.path
 
-    private fun PsiElement.getMethodRef(): MethodRef =
-        methodFinderFor(containingFile).toMethodRef(this)
+    private val PsiElement.methodKey: MethodKey 
+        get() = introspectorFor(containingFile).toMethodKey(this)
+    
+    private fun <E,F> List<E>.withTotalCount(body: (List<E>, Int) -> F): F =
+        body.invoke(this, this.size)
 }
+

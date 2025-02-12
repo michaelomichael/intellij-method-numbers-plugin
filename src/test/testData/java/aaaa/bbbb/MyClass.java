@@ -1,63 +1,65 @@
+package aaaa.bbbb;
+
 public class MyClass {
-    // #1
+    // #0
     public String greeting() {
         return "Hello, world!";
     }
 
-    // #2
+    // #1
     public String farewell(MyInnerClass fakeChild, List<String> names) {
         return "Goodbye, cruel world!";
     }
     
     class MyInnerClass {
-        // #3
+        // #2
         public String innerGreeting() {
             return "Hello, inner!";
         }
 
         class MyInnerInnerClass {
-            // #4
+            // #3
             public String innerInnerGreeting() {
                 return "Hello, inner inner!"
             }
 
-            // #5
+            // #4
             public String innerInnerFarewell() {
                 return "Goodbye, cruel inner inner!";
             }
         }
 
-        // #6
+        // #5
         public String innerFarewell() {
             return "Goodbye, cruel inner!";
         }
     }
     
     static class MyStaticInnerClass {
-        // #7
+        // #6
         public String staticInnerGreeting() {
             return "Hello, static inner!";
         }
 
-        // #8
+        // #7
         public String staticInnerFarewell() {
             return "Goodbye, cruel static inner!";
         }
     }
 
-    // #9
+    // #8
     public static String generateStatic() {
         return "&)*(<$&Y*()$&*()<"
     }
 }        
 
 private class PrivateTopLevelClass {
-    // #10
+    // #9
     public String privateTopLevelGreeting() {
         return "Hello, private top level!";
     }
 
-    // #11
+    // #10
     public String privateTopLevelFarewell() {
         return "Goodbye, cruel private top level!";
     }
