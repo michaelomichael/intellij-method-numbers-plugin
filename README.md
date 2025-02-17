@@ -17,11 +17,13 @@
 - [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
 
 <!-- Plugin description -->
-Displays a numeric hint beside each method in the file, so that you can more easily keep track of multiple similarly-named methods (e.g. in JUnit Test classes).
+Displays a numeric hint beside each method in the file.
+
+This lets you can more easily keep track of large test classes.
 
 It currently supports basic Java and Kotlin.
 
-![Java example with dark theme](.github/readme/example-java-dark.png)
+![preview](https://raw.githubusercontent.com/michaelomichael/intellij-method-numbers-plugin/refs/heads/main/.github/readme/example-java-dark.png)
 
 <!-- Plugin description end -->
 
