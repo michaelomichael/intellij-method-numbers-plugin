@@ -4,9 +4,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.childrenOfType
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.base.psi.getLineNumber
+import org.jetbrains.kotlin.idea.base.psi.getLineStartOffset
 import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinIntrospector : Introspector {
     override fun findAllMethods(file: PsiFile): List<MethodKey> =
@@ -53,7 +54,14 @@ class KotlinIntrospector : Introspector {
 
     override fun getMethodStartOffset(element: PsiElement): Int = 
         when (element) {
-            is KtNamedFunction -> element.startOffset
+            is KtNamedFunction -> 
+                element
+                    .identifyingElement
+                    ?.getLineNumber()
+                    ?.let { lineNumber ->
+                        element.containingFile.getLineStartOffset(lineNumber, true)
+                            ?: error("Failed to get line start offset for line #$lineNumber in file ${element.containingFile}") 
+                    } ?: error("Failed to get line number for identifying element of Kotlin function [$element]") 
             else -> error("PsiElement is not a method: $element")
         }
 
