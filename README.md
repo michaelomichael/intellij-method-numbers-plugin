@@ -1,8 +1,8 @@
 # intellij-method-numbers-plugin
 
 ![Build](https://github.com/michaelomichael/intellij-method-numbers-plugin/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/26566)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/26566)
+[![Version](https://img.shields.io/jetbrains/plugin/v/26566.svg)](https://plugins.jetbrains.com/plugin/26566)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/26566.svg)](https://plugins.jetbrains.com/plugin/26566)
 
 ## Template ToDo list
 - [x] Create a new [IntelliJ Platform Plugin Template][template] project.
