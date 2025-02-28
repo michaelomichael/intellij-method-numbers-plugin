@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinIntrospectorTest : BasePlatformTestCase() {
 
-    fun `test correct refs for methods`() {
+    fun `test correct locations for methods`() {
         val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.kt")
         val kotlinFile = assertInstanceOf(psiFile, KtFile::class.java)
         

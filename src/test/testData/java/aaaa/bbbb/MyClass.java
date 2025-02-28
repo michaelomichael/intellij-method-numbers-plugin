@@ -55,11 +55,12 @@ public class MyClass {
 
 private class PrivateTopLevelClass {
     // #9
-    public String privateTopLevelGreeting() {
+    @Override public String privateTopLevelGreeting() {
         return "Hello, private top level!";
     }
 
     // #10
+    @Override
     public String privateTopLevelFarewell() {
         return "Goodbye, cruel private top level!";
     }

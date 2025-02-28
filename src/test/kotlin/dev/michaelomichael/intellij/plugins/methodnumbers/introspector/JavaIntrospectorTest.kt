@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class JavaIntrospectorTest : BasePlatformTestCase() {
 
-    fun `test correct refs for methods`() {
+    fun `test correct locations for methods`() {
         val psiFile = myFixture.configureByFile("aaaa/bbbb/MyClass.java")
         val javaFile = assertInstanceOf(psiFile, PsiJavaFile::class.java)
         
@@ -23,7 +23,7 @@ class JavaIntrospectorTest : BasePlatformTestCase() {
             MethodKey("staticInnerFarewell",       983,  "aaaa.bbbb.MyClass.MyStaticInnerClass#staticInnerFarewell()"),
             MethodKey("generateStatic",            1103, "aaaa.bbbb.MyClass#generateStatic()"),
             MethodKey("privateTopLevelGreeting",   1246, "aaaa.bbbb.PrivateTopLevelClass#privateTopLevelGreeting()"), 
-            MethodKey("privateTopLevelFarewell",   1354, "aaaa.bbbb.PrivateTopLevelClass#privateTopLevelFarewell()"),
+            MethodKey("privateTopLevelFarewell",   1378, "aaaa.bbbb.PrivateTopLevelClass#privateTopLevelFarewell()"),
         ), result)
     }
 
