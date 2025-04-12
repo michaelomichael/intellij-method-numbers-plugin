@@ -1,8 +1,7 @@
 package dev.michaelomichael.intellij.plugins.methodnumbers.hints
 
-import com.intellij.codeInsight.hints.declarative.InlayTreeSink
-import com.intellij.codeInsight.hints.declarative.InlineInlayPosition
-import com.intellij.codeInsight.hints.declarative.SharedBypassCollector
+import com.intellij.codeInsight.hints.declarative.*
+import com.intellij.codeInsight.hints.declarative.HintFontSize.ABitSmallerThanInEditor
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiElement
@@ -35,7 +34,7 @@ class MethodNumbersInlayHintsCollector : SharedBypassCollector {
     private fun addInlayToMethod(offset: Int, methodIndexDetails: MethodIndexDetails, sink: InlayTreeSink) {
         sink.addPresentation(
             InlineInlayPosition(offset, relatedToPrevious = false),
-            hasBackground = true,
+            hintFormat = HintFormat.default.withFontSize(ABitSmallerThanInEditor),
             tooltip = MyBundle.message("hintTooltip", methodIndexDetails.methodIndexInFile+1, methodIndexDetails.numMethodsInFile)
         ) {
             text("${methodIndexDetails.methodIndexInFile+1}")
