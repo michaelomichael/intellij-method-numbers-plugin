@@ -5,10 +5,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory.introspectorFor
+import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory.isFiletypeSupported
 import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.MethodKey
 
 @Service(Service.Level.PROJECT)
-class MethodCountingService(val project: Project) {
+class MethodCountingService(@Suppress("unused") val project: Project) {
     
     data class MethodIndexDetails(val methodIndexInFile: Int, val numMethodsInFile: Int)
     
@@ -25,6 +26,10 @@ class MethodCountingService(val project: Project) {
     private val fileDetailsByFileKey = mutableMapOf<String,FileDetails>()
 
     fun getMethodNumber(method: PsiElement): MethodIndexDetails? {
+        if (!isFiletypeSupported(method.containingFile)) {
+            return null
+        }
+
         val fileKey = method.containingFile.fileKey
         val methodKey = method.methodKey
         
@@ -38,7 +43,7 @@ class MethodCountingService(val project: Project) {
     }
 
     private fun refreshCacheForFile(file: PsiFile): FileDetails =
-        introspectorFor(file)
+        introspectorFor(file)!!
             .findAllMethods(file)
             .withTotalCount { methods, count ->
                 methods.mapIndexed { idx, methodRef -> MethodDetails(methodRef, MethodIndexDetails(idx, count)) }
@@ -53,7 +58,7 @@ class MethodCountingService(val project: Project) {
         get() = virtualFile.path
 
     private val PsiElement.methodKey: MethodKey 
-        get() = introspectorFor(containingFile).toMethodKey(this)
+        get() = introspectorFor(containingFile)!!.toMethodKey(this)
     
     private fun <E,F> List<E>.withTotalCount(body: (List<E>, Int) -> F): F =
         body.invoke(this, this.size)
