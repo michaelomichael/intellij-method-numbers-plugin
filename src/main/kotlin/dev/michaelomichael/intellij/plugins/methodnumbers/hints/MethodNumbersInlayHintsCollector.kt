@@ -6,6 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiElement
 import dev.michaelomichael.intellij.plugins.methodnumbers.MyBundle
+import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory
 import dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService
 import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory.introspectorFor
 import dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService.MethodIndexDetails
@@ -13,11 +14,11 @@ import dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountin
 class MethodNumbersInlayHintsCollector : SharedBypassCollector {
 
     override fun collectFromElement(element: PsiElement, sink: InlayTreeSink) {
-        if (!element.isValid || element.project.isDefault) {
+        if (!element.isValid || element.project.isDefault || !IntrospectorFactory.isFiletypeSupported(element.containingFile)) {
             return
         }
 
-        val introspector = introspectorFor(element.containingFile)
+        val introspector = introspectorFor(element.containingFile) ?: return
             
         if (! introspector.isMethod(element)) {
             return
