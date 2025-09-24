@@ -12,6 +12,14 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="dev.michaelomichael.intellij.plugins.methodnumbers.services.MethodCountingService" id="MethodCountingService"/>
         <codeInsight.declarativeInlayProviderFactory implementation="dev.michaelomichael.intellij.plugins.methodnumbers.hints.MethodNumbersInlayHintsFactory"/>
+        <applicationService serviceImplementation="dev.michaelomichael.intellij.plugins.methodnumbers.settings.AppSettings"/>
+        <applicationConfigurable
+            parentId="tools"
+            instance="dev.michaelomichael.intellij.plugins.methodnumbers.settings.AppSettingsConfigurable"
+            id="dev.michaelomichael.intellij.plugins.methodnumbers.settings.AppSettingsConfigurable"
+            key="settings.title"
+            bundle="messages.MyBundle"
+            />
     </extensions>
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <supportsKotlinPluginMode supportsK2="true" />

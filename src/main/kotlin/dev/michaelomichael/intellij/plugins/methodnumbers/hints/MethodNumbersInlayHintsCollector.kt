@@ -18,7 +18,7 @@ class MethodNumbersInlayHintsCollector : SharedBypassCollector {
             return
         }
 
-        val introspector = introspectorFor(element.containingFile) ?: return
+        val introspector = introspectorFor(element.containingFile)
             
         if (! introspector.isMethod(element)) {
             return
@@ -27,7 +27,7 @@ class MethodNumbersInlayHintsCollector : SharedBypassCollector {
         element
             .project
             .service<MethodCountingService>()
-            .getMethodNumber(element)
+            .getMethodNumber(element, introspector)
             ?.also { addInlayToMethod(introspector.getMethodStartOffset(element), it, sink) }
             ?: thisLogger().warn("Cannot find a method number for $element")
     }

@@ -4,8 +4,8 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.Introspector
 import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory.introspectorFor
-import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.IntrospectorFactory.isFiletypeSupported
 import dev.michaelomichael.intellij.plugins.methodnumbers.introspector.MethodKey
 
 @Service(Service.Level.PROJECT)
@@ -25,25 +25,21 @@ class MethodCountingService(@Suppress("unused") val project: Project) {
 
     private val fileDetailsByFileKey = mutableMapOf<String,FileDetails>()
 
-    fun getMethodNumber(method: PsiElement): MethodIndexDetails? {
-        if (!isFiletypeSupported(method.containingFile)) {
-            return null
-        }
-
+    fun getMethodNumber(method: PsiElement, introspector: Introspector): MethodIndexDetails? {
         val fileKey = method.containingFile.fileKey
         val methodKey = method.methodKey
         
         // If not we don't find the exact method in-cache then we'll reload the cache
         // and try again.
         val methodDetails = fileDetailsByFileKey[fileKey]?.methodsByMethodKey?.get(methodKey)
-            ?: refreshCacheForFile(method.containingFile)
+            ?: refreshCacheForFile(method.containingFile, introspector)
                     .methodsByMethodKey[methodKey]
         
         return methodDetails?.indexDetails
     }
 
-    private fun refreshCacheForFile(file: PsiFile): FileDetails =
-        introspectorFor(file)!!
+    private fun refreshCacheForFile(file: PsiFile, introspector: Introspector): FileDetails =
+        introspector
             .findAllMethods(file)
             .withTotalCount { methods, count ->
                 methods.mapIndexed { idx, methodRef -> MethodDetails(methodRef, MethodIndexDetails(idx, count)) }
@@ -58,7 +54,7 @@ class MethodCountingService(@Suppress("unused") val project: Project) {
         get() = virtualFile.path
 
     private val PsiElement.methodKey: MethodKey 
-        get() = introspectorFor(containingFile)!!.toMethodKey(this)
+        get() = introspectorFor(containingFile).toMethodKey(this)
     
     private fun <E,F> List<E>.withTotalCount(body: (List<E>, Int) -> F): F =
         body.invoke(this, this.size)
