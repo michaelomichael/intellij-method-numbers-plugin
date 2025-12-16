@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## 0.0.4
+### Added
+- Support newer versions of IntelliJ
+
 ## 0.0.3 - 2025-09-24
 ### Added
 - Support Kotest FunSpec test methods
