@@ -26,4 +26,8 @@ public class MyClass {
     public String farewell() {
         return "Farewell, cruel world!";
     }
+
+    private String doNotIncludeMe() {
+        return "You shouldn't assign a number to me";
+    }
 }

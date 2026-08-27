@@ -22,8 +22,6 @@ class JavaIntrospectorTest : BasePlatformTestCase() {
             MethodKey("staticInnerGreeting",       869,  "aaaa.bbbb.MyClass.MyStaticInnerClass#staticInnerGreeting()"), 
             MethodKey("staticInnerFarewell",       983,  "aaaa.bbbb.MyClass.MyStaticInnerClass#staticInnerFarewell()"),
             MethodKey("generateStatic",            1103, "aaaa.bbbb.MyClass#generateStatic()"),
-            MethodKey("privateTopLevelGreeting",   1246, "aaaa.bbbb.PrivateTopLevelClass#privateTopLevelGreeting()"), 
-            MethodKey("privateTopLevelFarewell",   1378, "aaaa.bbbb.PrivateTopLevelClass#privateTopLevelFarewell()"),
         ), result)
     }
 

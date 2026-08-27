@@ -53,6 +53,10 @@ class MyClass {
             return "&)*(<$&Y*()$&*()<"
         }
     }
+
+    private fun doNotIncludeMe(): String {
+        return "You shouldn't assign a number to me"
+    }
 }
 
 private class PrivateTopLevelClass {

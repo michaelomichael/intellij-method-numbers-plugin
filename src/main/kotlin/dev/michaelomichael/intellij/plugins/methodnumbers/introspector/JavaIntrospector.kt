@@ -1,5 +1,6 @@
 package dev.michaelomichael.intellij.plugins.methodnumbers.introspector
 
+import com.intellij.lang.jvm.JvmModifier.PRIVATE
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -16,15 +17,17 @@ class JavaIntrospector : Introspector {
             }
         }
 
+    @Suppress("UnstableApiUsage")
     private fun getMethodsForClass(clazz: PsiClass): List<MethodKey> = clazz
-        .children
-        .flatMap { child ->
+        .takeUnless {it.hasModifier(PRIVATE) }
+        ?.children
+        ?.flatMap { child ->
             when (child) {
-                is PsiClass -> getMethodsForClass(child)
-                is PsiMethod -> listOf(toMethodKey(child))
-                else -> emptyList()
-            }
-        }
+                is PsiClass -> child.takeUnless { it.hasModifier(PRIVATE) } ?.let { getMethodsForClass(it) }
+                is PsiMethod -> child.takeUnless { it.hasModifier(PRIVATE) }?.let { listOf(toMethodKey(it)) }
+                else -> null
+            } ?: emptyList()
+        } ?: emptyList()
 
     override fun toMethodKey(method: PsiElement) = 
         when (method) {

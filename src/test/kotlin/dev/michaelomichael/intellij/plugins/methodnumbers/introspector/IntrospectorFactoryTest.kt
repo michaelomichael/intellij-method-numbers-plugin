@@ -9,11 +9,13 @@ class IntrospectorFactoryTest : BasePlatformTestCase() {
 
     override fun setUp() {
         super.setUp()
+        givenEnabledIs(true)
         givenApplyOnlyToTestsSettingIs(false)
     }
 
     override fun tearDown() {
         super.tearDown()
+        givenEnabledIs(true)
         givenApplyOnlyToTestsSettingIs(false)
     }
 
@@ -31,6 +33,14 @@ class IntrospectorFactoryTest : BasePlatformTestCase() {
     fun `test properties file type is not supported`() {
 
         val psiFile = myFixture.configureByFile("other/Test.properties")
+        assertFalse(IntrospectorFactory.isFiletypeSupported(psiFile))
+    }
+
+
+    fun `test file is not supported when enabled is false`() {
+        givenEnabledIs(false)
+
+        val psiFile = myFixture.configureByFile("java/aaaa/bbbb/MyClass.java")
         assertFalse(IntrospectorFactory.isFiletypeSupported(psiFile))
     }
 
@@ -89,7 +99,11 @@ class IntrospectorFactoryTest : BasePlatformTestCase() {
 
     override fun getTestDataPath() = "src/test/testData"
 
+    private fun givenEnabledIs(value: Boolean) {
+        service<AppSettings>().state.enabled = value
+    }
+
     private fun givenApplyOnlyToTestsSettingIs(value: Boolean) {
-        service<AppSettings>().state!!.applyOnlyToTests = value
+        service<AppSettings>().state.applyOnlyToTests = value
     }
 }

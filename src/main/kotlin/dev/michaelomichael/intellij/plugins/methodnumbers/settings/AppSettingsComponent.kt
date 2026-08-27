@@ -9,17 +9,23 @@ import javax.swing.JPanel
 class AppSettingsComponent {
     val mainPanel: JPanel
 
+    private val enabledCheckbox = JBCheckBox(MyBundle.message("settings.enabled"))
     private val applyOnlyToTestsCheckbox = JBCheckBox(MyBundle.message("settings.applyOnlyToTests"))
 
     init {
         mainPanel = FormBuilder.createFormBuilder()
+            .addComponent(enabledCheckbox, 1)
             .addComponent(applyOnlyToTestsCheckbox, 1)
             .addComponentFillVertically(JPanel(), 0)
             .panel
     }
 
     val preferredFocusedComponent: JComponent
-        get() = applyOnlyToTestsCheckbox
+        get() = enabledCheckbox
+
+    var enabled: Boolean
+        get() = enabledCheckbox.isSelected
+        set(newValue) { enabledCheckbox.isSelected = newValue}
 
     var applyOnlyToTests: Boolean
         get() = applyOnlyToTestsCheckbox.isSelected

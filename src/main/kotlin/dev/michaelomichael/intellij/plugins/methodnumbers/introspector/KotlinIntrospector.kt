@@ -7,7 +7,21 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.base.psi.getLineNumber
 import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
+
+TODO 2026-07-21:
+    """
+    I updated the code so that it ignores private methods.
+
+    I've added a setting to enable/disable, with the hopes that it could be a keyboard shortcut.
+        It shows up in the Preferences panel (under "Tools > Method Numbers") but when you change
+        either of the checkboxes and hit OK, then go back in to the prefs panel, the changes haven't
+        been saved.
+
+    I bumped the version number to 0.0.5 already in gradle.properties, but need to update the CHANGELOG.md
+    file.
+    """
 class KotlinIntrospector : Introspector {
     override fun findAllMethods(file: PsiFile): List<MethodKey> =
         findAllKotlinMethods(file.unwrapped as PsiFile)
@@ -19,27 +33,30 @@ class KotlinIntrospector : Introspector {
             .map { it.unwrapped }
             .flatMap { child ->
                 when (child) {
-                    is KtClassOrObject -> child.findFunctionsRecursively()
-                    is KtNamedFunction -> listOf(child.toMethodRef())
-                    else -> emptyList()
-                }
+                    is KtClassOrObject -> child.takeUnless { it.isPrivate() }?.findFunctionsRecursively()
+                    is KtNamedFunction -> child.takeUnless { it.isPrivate() }?.toMethodRef()?.let { listOf(it) }
+                    else -> null
+                } ?: emptyList()
             }
 
-    private fun KtClassOrObject.findFunctionsRecursively(): List<MethodKey> = children
-            .flatMap { child ->
+    private fun KtClassOrObject.findFunctionsRecursively(): List<MethodKey> =
+        takeUnless { it.isPrivate() }
+            ?.children
+            ?.flatMap { child ->
                 when (child) {
                     is KtClassBody -> child.findFunctionsRecursively()
                     else -> emptyList()
                 }
             }
+            ?: emptyList()
 
     private fun KtClassBody.findFunctionsRecursively(): List<MethodKey> = children
         .flatMap { child ->
             when (child) {
-                is KtNamedFunction -> listOf(child.toMethodRef())
-                is KtClassOrObject -> child.findFunctionsRecursively()
-                else -> emptyList()
-            }
+                is KtNamedFunction -> child.takeUnless { it.isPrivate() }?.toMethodRef()?.let { listOf(it) }
+                is KtClassOrObject -> child.takeUnless { it.isPrivate() }?.findFunctionsRecursively()
+                else -> null
+            } ?: emptyList()
         }
 
     override fun toMethodKey(method: PsiElement): MethodKey =

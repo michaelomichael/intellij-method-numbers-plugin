@@ -51,6 +51,10 @@ public class MyClass {
     public static String generateStatic() {
         return "&)*(<$&Y*()$&*()<"
     }
+
+    private String doNotIncludeMe() {
+        return "You shouldn't assign a number to me";
+    }
 }        
 
 private class PrivateTopLevelClass {

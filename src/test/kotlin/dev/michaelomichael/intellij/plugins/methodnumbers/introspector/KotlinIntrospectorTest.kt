@@ -22,9 +22,9 @@ class KotlinIntrospectorTest : BasePlatformTestCase() {
             MethodKey("innerGreeting",             871,  "aaaa.bbbb.MyClass.MyStaticInnerClass.innerGreeting()"),
             MethodKey("innerFarewell",             976,  "aaaa.bbbb.MyClass.MyStaticInnerClass.innerFarewell()"),
             MethodKey("generateStatic",            1118, "aaaa.bbbb.MyClass.Companion.generateStatic()"),
-            MethodKey("privateTopLevelGreeting",   1258, "aaaa.bbbb.PrivateTopLevelClass.privateTopLevelGreeting()"),
-            MethodKey("privateTopLevelFarewell",   1363, "aaaa.bbbb.PrivateTopLevelClass.privateTopLevelFarewell()"),
-            MethodKey("topLevelFunction",          1471, "aaaa.bbbb.topLevelFunction()"),
+//            MethodKey("privateTopLevelGreeting",   1258, "aaaa.bbbb.PrivateTopLevelClass.privateTopLevelGreeting()"),
+//            MethodKey("privateTopLevelFarewell",   1363, "aaaa.bbbb.PrivateTopLevelClass.privateTopLevelFarewell()"),
+            MethodKey("topLevelFunction",          1574, "aaaa.bbbb.topLevelFunction()"),
         ), result)
     }
 

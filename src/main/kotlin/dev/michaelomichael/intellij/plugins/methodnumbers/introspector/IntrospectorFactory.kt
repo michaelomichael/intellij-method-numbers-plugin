@@ -8,6 +8,7 @@ import dev.michaelomichael.intellij.plugins.methodnumbers.settings.AppSettings
 
 object IntrospectorFactory {
     fun isFiletypeSupported(file: PsiFile): Boolean =
+        isEnabled() &&
         isTestModeRestrictionSatisfied(file) &&
                 when (file.fileType.name) {
                     "Kotlin", "JAVA" -> true
@@ -15,6 +16,10 @@ object IntrospectorFactory {
                 }
 
     fun introspectorFor(file: PsiFile): Introspector {
+        if (!isEnabled()) {
+            error("Method counter introspection is not enabled")
+        }
+
         if (!isTestModeRestrictionSatisfied(file)) {
             error("File '$file' is not a candidate for introspection because it is not a test file")
         }
@@ -28,6 +33,8 @@ object IntrospectorFactory {
 
     private fun isTestModeRestrictionSatisfied(file: PsiFile) =
         (!isApplyToTestFilesOnlyMode() || isTestScope(file))
+
+    private fun isEnabled() = service<AppSettings>().state?.enabled ?: false
 
     private fun isApplyToTestFilesOnlyMode() = service<AppSettings>().state?.applyOnlyToTests ?: false
 

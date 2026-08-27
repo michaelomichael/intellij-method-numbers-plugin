@@ -9,7 +9,7 @@ import javax.swing.JComponent
 class AppSettingsConfigurable() : Configurable {
     private var mySettingsComponent: AppSettingsComponent? = null
 
-    @Nls(capitalization = Nls.Capitalization.Title, )
+    @Nls(capitalization = Nls.Capitalization.Title)
     override fun getDisplayName(): @NlsContexts.ConfigurableName String = MyBundle.message("settings.title")
 
     override fun getPreferredFocusedComponent(): JComponent =
@@ -21,13 +21,16 @@ class AppSettingsConfigurable() : Configurable {
             .mainPanel
 
     override fun isModified(): Boolean =
-        mySettingsComponent!!.applyOnlyToTests != getState().applyOnlyToTests
+        mySettingsComponent!!.enabled != getState().enabled &&
+                mySettingsComponent!!.applyOnlyToTests != getState().applyOnlyToTests
 
     override fun apply() {
+        getState().enabled = mySettingsComponent!!.enabled
         getState().applyOnlyToTests = mySettingsComponent!!.applyOnlyToTests
     }
 
     override fun reset() {
+        mySettingsComponent!!.enabled = getState().enabled
         mySettingsComponent!!.applyOnlyToTests = getState().applyOnlyToTests
     }
 
@@ -35,5 +38,5 @@ class AppSettingsConfigurable() : Configurable {
         mySettingsComponent = null
     }
 
-    private fun getState() = AppSettings.Companion.getInstance().state!!
+    private fun getState() = AppSettings.Companion.getInstance().state
 }

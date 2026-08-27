@@ -51,7 +51,7 @@ class MethodCountingService(@Suppress("unused") val project: Project) {
             }
 
     private val PsiFile.fileKey: String
-        get() = virtualFile.path
+        get() = virtualFile?.path ?: error("No virtual file for $this. Original file is ${this.originalFile}")
 
     private val PsiElement.methodKey: MethodKey 
         get() = introspectorFor(containingFile).toMethodKey(this)

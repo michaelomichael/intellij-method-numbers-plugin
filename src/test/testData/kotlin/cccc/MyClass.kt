@@ -26,4 +26,8 @@ class MyClass {
     fun farewell(): String {
         return "Farewell, cruel world!"
     }
+
+    private fun doNotIncludeMe(): String {
+        return "You shouldn't assign a number to me"
+    }
 }

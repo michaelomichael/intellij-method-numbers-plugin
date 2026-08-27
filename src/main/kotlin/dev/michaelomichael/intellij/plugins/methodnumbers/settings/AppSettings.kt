@@ -10,11 +10,11 @@ import com.intellij.openapi.components.Storage
     storages = [Storage("SdkSettingsPlugin.xml")]
 )
 class AppSettings: PersistentStateComponent<AppSettings.State> {
-    data class State(var applyOnlyToTests: Boolean = false)
+    data class State(var enabled: Boolean = true, var applyOnlyToTests: Boolean = false)
 
     private var state: State = State()
 
-    override fun getState(): State? = this.state
+    override fun getState(): State = this.state
 
     override fun loadState(state: State) {
         this.state = state
